@@ -85,7 +85,6 @@ class MainActivity : AppCompatActivity() {
         ib_sonido.setColorFilter(Color.GREEN)
 
         sonido("background",true)
-        println("sonido")
         iv_11.tag = "0"
         iv_12.tag = "1"
         iv_13.tag = "2"
@@ -112,7 +111,7 @@ class MainActivity : AppCompatActivity() {
         tv_j2 = findViewById(R.id.tv_j2)
         tv_j2.setTextColor(Color.GRAY)
         tv_j1.setTextColor(Color.WHITE)
-        tv_anuncio = findViewById(R.id.tv_turno)
+        tv_anuncio = findViewById(R.id.tv_anuncio)
     }
 
     private fun sonido(sonidoName: String, loop: Boolean = false) {
@@ -154,35 +153,45 @@ class MainActivity : AppCompatActivity() {
         verificar(imagen)
     }
 
+    private fun mostrarCartaConAnimacion(view: ImageView, tag: Int) {
+        view.animate()
+            .rotationY(90f)
+            .setDuration(150)
+            .withEndAction {
+                val nuevaImagen = when (imagenesArray[tag]) {
+                    11 -> R.drawable.homero
+                    12 -> R.drawable.bart
+                    13 -> R.drawable.lisa
+                    14 -> R.drawable.familia
+                    15 -> R.drawable.comida
+                    16 -> R.drawable.juntos
+                    21 -> R.drawable.homero
+                    22 -> R.drawable.bart
+                    23 -> R.drawable.lisa
+                    24 -> R.drawable.familia
+                    25 -> R.drawable.comida
+                    26 -> R.drawable.juntos
+                    else -> R.drawable.oculta
+                }
+                view.setImageResource(nuevaImagen)
+
+
+                view.rotationY = -90f
+                view.animate()
+                    .rotationY(0f)
+                    .setDuration(150)
+                    .start()
+            }
+            .start()
+    }
+
+
     private fun verificar(imagen: View) {
-        var iv = (imagen) as ImageView
+        var iv = imagen as ImageView
         var tag = imagen.tag.toString().toInt()
-        if (imagenesArray[tag] == 11) {
-            iv.setImageResource(homero)
-        } else if (imagenesArray[tag] == 12) {
-            iv.setImageResource(bart)
-        } else if (imagenesArray[tag] == 13) {
-            iv.setImageResource(lisa)
-        } else if (imagenesArray[tag] == 14) {
-            iv.setImageResource(familia)
-        } else if (imagenesArray[tag] == 15) {
-            iv.setImageResource(comida)
-        } else if (imagenesArray[tag] == 16) {
-            iv.setImageResource(juntos)
-        } else if (imagenesArray[tag] == 21) {
-            iv.setImageResource(homero)
-        } else if (imagenesArray[tag] == 22) {
-            iv.setImageResource(bart)
-        } else if (imagenesArray[tag] == 23) {
-            iv.setImageResource(lisa)
-        } else if (imagenesArray[tag] == 24) {
-            iv.setImageResource(familia)
-        } else if (imagenesArray[tag] == 25) {
-            iv.setImageResource(comida)
-        } else if (imagenesArray[tag] == 26) {
-            iv.setImageResource(juntos)
-        }
-        println(numeroImagen)
+
+        mostrarCartaConAnimacion(iv, tag)
+
         if (numeroImagen == 1) {
             imagen1 = iv
             numeroImagen = 2
@@ -197,8 +206,8 @@ class MainActivity : AppCompatActivity() {
                 sonImagenesIguales()
             }, 1000)
         }
-
     }
+
 
     private fun sonImagenesIguales() {
         if (imagen1.drawable.constantState == imagen2.drawable.constantState) {
@@ -219,10 +228,12 @@ class MainActivity : AppCompatActivity() {
             imagen1.setImageResource(R.drawable.oculta)
             imagen2.setImageResource(R.drawable.oculta)
             if (turno==1) {
+                tv_anuncio.text = "Turno del jugador 2"
                 turno = 2
                 tv_j1.setTextColor(Color.GRAY)
                 tv_j2.setTextColor(Color.WHITE)
             } else if (turno==2) {
+                tv_anuncio.text = "Turno del jugador 1"
                 turno = 1
                 tv_j2.setTextColor(Color.GRAY)
                 tv_j1.setTextColor(Color.WHITE)
