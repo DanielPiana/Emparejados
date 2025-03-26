@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity() {
     lateinit var iv_32:ImageView
     lateinit var iv_33:ImageView
     lateinit var iv_34:ImageView
+
+    lateinit var iv_41:ImageView
+    lateinit var iv_42:ImageView
+    lateinit var iv_43:ImageView
+    lateinit var iv_44:ImageView
     //</editor-fold>
     //<editor-fold desc="OTROS GUI">
     lateinit var tv_j1:TextView
@@ -46,13 +51,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var imagen2:ImageView
     //</editor-fold>
     //<editor-fold desc="VARIABLES GUI">
-    var imagenesArray = arrayOf(11,12,13,14,15,16,21,22,23,24,25,26)
+    var imagenesArray = arrayOf(11,12,13,14,15,16,17,18,21,22,23,24,25,26,27,28)
     var homero = 0
     var bart = 0
     var lisa = 0
     var familia = 0
     var juntos = 0
     var comida = 0
+    var apu = 0
+    var barney = 0
 
     var turno = 1
     var puntosj1 = 0
@@ -80,6 +87,10 @@ class MainActivity : AppCompatActivity() {
         iv_32 = findViewById(R.id.iv_32)
         iv_33 = findViewById(R.id.iv_33)
         iv_34 = findViewById(R.id.iv_34)
+        iv_41 = findViewById(R.id.iv_41)
+        iv_42 = findViewById(R.id.iv_42)
+        iv_43 = findViewById(R.id.iv_43)
+        iv_44 = findViewById(R.id.iv_44)
 
         ib_sonido = findViewById(R.id.ib_sonido)
         ib_sonido.setColorFilter(Color.GREEN)
@@ -97,6 +108,10 @@ class MainActivity : AppCompatActivity() {
         iv_32.tag = "9"
         iv_33.tag = "10"
         iv_34.tag = "11"
+        iv_41.tag = "12"
+        iv_42.tag = "13"
+        iv_43.tag = "14"
+        iv_44.tag = "15"
 
         homero = R.drawable.homero
         bart = R.drawable.bart
@@ -104,6 +119,8 @@ class MainActivity : AppCompatActivity() {
         familia = R.drawable.familia
         juntos = R.drawable.juntos
         lisa = R.drawable.lisa
+        apu = R.drawable.apu
+        barney = R.drawable.barney
 
         imagenesArray.shuffle()
 
@@ -165,12 +182,16 @@ class MainActivity : AppCompatActivity() {
                     14 -> R.drawable.familia
                     15 -> R.drawable.comida
                     16 -> R.drawable.juntos
+                    17 -> R.drawable.apu
+                    18 -> R.drawable.barney
                     21 -> R.drawable.homero
                     22 -> R.drawable.bart
                     23 -> R.drawable.lisa
                     24 -> R.drawable.familia
                     25 -> R.drawable.comida
                     26 -> R.drawable.juntos
+                    27 -> R.drawable.apu
+                    28 -> R.drawable.barney
                     else -> R.drawable.oculta
                 }
                 view.setImageResource(nuevaImagen)
@@ -251,6 +272,10 @@ class MainActivity : AppCompatActivity() {
         iv_32.isEnabled = iv_32.tag.toString().isNotEmpty()
         iv_33.isEnabled = iv_33.tag.toString().isNotEmpty()
         iv_34.isEnabled = iv_34.tag.toString().isNotEmpty()
+        iv_41.isEnabled = iv_41.tag.toString().isNotEmpty()
+        iv_42.isEnabled = iv_42.tag.toString().isNotEmpty()
+        iv_43.isEnabled = iv_43.tag.toString().isNotEmpty()
+        iv_44.isEnabled = iv_44.tag.toString().isNotEmpty()
 
         verificarFinjuego()
     }
@@ -268,7 +293,11 @@ class MainActivity : AppCompatActivity() {
             iv_31.tag.toString().isEmpty() &&
             iv_32.tag.toString().isEmpty() &&
             iv_33.tag.toString().isEmpty() &&
-            iv_34.tag.toString().isEmpty()
+            iv_34.tag.toString().isEmpty() &&
+            iv_41.tag.toString().isEmpty() &&
+            iv_42.tag.toString().isEmpty() &&
+            iv_43.tag.toString().isEmpty() &&
+            iv_44.tag.toString().isEmpty()
         ) {
             mp.stop()
             mp.release()
@@ -294,8 +323,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mpFondo.stop()
-        mpFondo.release()
+        if (mpFondo.isPlaying) {
+            mpFondo.stop()
+            mpFondo.release()
+        }
     }
 
     private fun deshabilitarImagenes() {
@@ -311,6 +342,10 @@ class MainActivity : AppCompatActivity() {
         iv_32.isEnabled = false
         iv_33.isEnabled = false
         iv_34.isEnabled = false
+        iv_41.isEnabled = false
+        iv_42.isEnabled = false
+        iv_43.isEnabled = false
+        iv_44.isEnabled = false
 
     }
 }
