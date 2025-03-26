@@ -299,7 +299,7 @@ class MainActivity : AppCompatActivity() {
         if (imageViews.all { it.tag.toString().isEmpty() }) {
             mp.stop()
             mp.release()
-
+            animarFinalJuego(imageViews)
             sonido("win")
             val builder = AlertDialog.Builder(this)
             builder.setTitle("FIN DEL JUEGO")
@@ -379,13 +379,25 @@ fun animarAcierto(carta: ImageView) {
                 .setDuration(200)
         }
 }
-private fun iniciarAnimacionGiroFinal(carta: ImageView) {
-    carta.animate()
-        .rotationBy(180f)
-        .setDuration(500)
-        .withEndAction { carta.postDelayed({ iniciarAnimacionGiroFinal(carta) }, 1000) }
-        .start()
+fun animarFinalJuego(imageViews: List<ImageView>) {
+    imageViews.forEach { imageView ->
+        imageView.animate()
+            .scaleX(1.5f) // Aumentar el tamaño en el eje X
+            .scaleY(1.5f) // Aumentar el tamaño en el eje Y
+            .setDuration(1000) // Duración de la animación
+            .withEndAction {
+                // Al terminar, puedes devolver las imágenes a su tamaño original si lo deseas
+                imageView.animate()
+                    .scaleX(1f) // Vuelve al tamaño original en el eje X
+                    .scaleY(1f) // Vuelve al tamaño original en el eje Y
+                    .setDuration(500) // Tiempo para el regreso
+                    .start()
+            }
+            .start() // Inicia la animación
+    }
 }
+
+
 
 
 
