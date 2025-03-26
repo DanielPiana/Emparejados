@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var iv_42:ImageView
     lateinit var iv_43:ImageView
     lateinit var iv_44:ImageView
+
+    lateinit var imageViews: List<ImageView>
+
+
     //</editor-fold>
     //<editor-fold desc="OTROS GUI">
     lateinit var tv_j1:TextView
@@ -91,6 +95,13 @@ class MainActivity : AppCompatActivity() {
         iv_42 = findViewById(R.id.iv_42)
         iv_43 = findViewById(R.id.iv_43)
         iv_44 = findViewById(R.id.iv_44)
+
+
+        // LISTA PARA COMPROBAR TODAS LAS TAGS
+        imageViews = listOf(iv_11, iv_12, iv_13, iv_14, iv_21, iv_22, iv_23, iv_24,
+            iv_31, iv_32, iv_33, iv_34, iv_41, iv_42, iv_43, iv_44)
+
+
 
         ib_sonido = findViewById(R.id.ib_sonido)
         ib_sonido.setColorFilter(Color.GREEN)
@@ -232,6 +243,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun sonImagenesIguales() {
         if (imagen1.drawable.constantState == imagen2.drawable.constantState) {
+            animarAcierto(imagen1)
+            animarAcierto(imagen2)
             sonido("success")
             if (turno == 1) {
                 puntosj1++
@@ -246,6 +259,8 @@ class MainActivity : AppCompatActivity() {
             imagen2.tag = ""
         } else {
             sonido("no")
+            vibrarCarta(imagen1)
+            vibrarCarta(imagen2)
             imagen1.setImageResource(R.drawable.oculta)
             imagen2.setImageResource(R.drawable.oculta)
             if (turno==1) {
@@ -281,26 +296,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun verificarFinjuego() {
-        if (
-            iv_11.tag.toString().isEmpty() &&
-            iv_12.tag.toString().isEmpty() &&
-            iv_13.tag.toString().isEmpty() &&
-            iv_14.tag.toString().isEmpty() &&
-            iv_21.tag.toString().isEmpty() &&
-            iv_22.tag.toString().isEmpty() &&
-            iv_23.tag.toString().isEmpty() &&
-            iv_24.tag.toString().isEmpty() &&
-            iv_31.tag.toString().isEmpty() &&
-            iv_32.tag.toString().isEmpty() &&
-            iv_33.tag.toString().isEmpty() &&
-            iv_34.tag.toString().isEmpty() &&
-            iv_41.tag.toString().isEmpty() &&
-            iv_42.tag.toString().isEmpty() &&
-            iv_43.tag.toString().isEmpty() &&
-            iv_44.tag.toString().isEmpty()
-        ) {
+        if (imageViews.all { it.tag.toString().isEmpty() }) {
             mp.stop()
             mp.release()
+
             sonido("win")
             val builder = AlertDialog.Builder(this)
             builder.setTitle("FIN DEL JUEGO")
@@ -349,3 +348,44 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
+
+fun vibrarCarta(carta: ImageView) {
+    carta.animate()
+        .translationXBy(20f) // MOVEMOS LA CARTA A LA DERECHA
+        .setDuration(50)
+        .withEndAction {
+            carta.animate()
+                .translationXBy(-40f) // MOVEMOS LA CARTA A LA IZQUIERDA DE SU POSICION ORIGINAL
+                .setDuration(50)
+                .withEndAction {
+                    carta.animate()
+                        .translationXBy(20f) // LA VOLVEMOS A PONER EN EL CENTRO
+                        .setDuration(50)
+                }
+        }
+}
+fun animarAcierto(carta: ImageView) {
+    carta.animate()
+        //AUMENTAMOS EL TAMAÑO VERTICAL Y HORIZONTAL
+        .scaleX(1.2f)
+        .scaleY(1.2f)
+        .alpha(0.7f) // HACEMOS LA CARTA UN POCO TRANSPARENTE
+        .setDuration(200)
+        .withEndAction { // CUANDO ACABA LA ANIMACION ANTERIOR, LO VOLVEMOS A PONER COMO ESTABA
+            carta.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(200)
+        }
+}
+private fun iniciarAnimacionGiroFinal(carta: ImageView) {
+    carta.animate()
+        .rotationBy(180f)
+        .setDuration(500)
+        .withEndAction { carta.postDelayed({ iniciarAnimacionGiroFinal(carta) }, 1000) }
+        .start()
+}
+
+
+
