@@ -1,12 +1,16 @@
 package com.example.appemparejados
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 
 import android.view.View
 import android.widget.ImageButton
@@ -46,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var tv_j1:TextView
     lateinit var tv_j2:TextView
     lateinit var tv_anuncio:TextView
+    lateinit var tv_bonus:TextView
 
     lateinit var ib_sonido:ImageButton
 
@@ -70,6 +75,7 @@ class MainActivity : AppCompatActivity() {
     var puntosj2 = 0
     var numeroImagen = 1
     var escuchar = true
+    var bonus = 0
     //</editor-fold>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         tv_j2.setTextColor(Color.GRAY)
         tv_j1.setTextColor(Color.WHITE)
         tv_anuncio = findViewById(R.id.tv_anuncio)
+        tv_bonus = findViewById(R.id.tv_bonus)
     }
 
     private fun sonido(sonidoName: String, loop: Boolean = false) {
@@ -246,18 +253,27 @@ class MainActivity : AppCompatActivity() {
             animarAcierto(imagen1)
             animarAcierto(imagen2)
             sonido("success")
+
+            val puntosAcumulados = 1 + bonus
+
             if (turno == 1) {
-                puntosj1++
+                puntosj1 += puntosAcumulados
                 tv_j1.text = "J1: $puntosj1"
+                bonus = (bonus + 1).coerceAtMost(3)
+                actualizarBonus(tv_bonus,bonus)
             } else if (turno == 2) {
-                puntosj2++
+                puntosj2 += puntosAcumulados
                 tv_j2.text = "J2: $puntosj2"
+                bonus = (bonus + 1).coerceAtMost(3)
+                actualizarBonus(tv_bonus,bonus)
             }
             imagen1.isEnabled = false
             imagen2.isEnabled = false
             imagen1.tag = ""
             imagen2.tag = ""
         } else {
+            tv_bonus.text = ""
+            bonus = 0
             sonido("no")
             vibrarCarta(imagen1)
             vibrarCarta(imagen2)
@@ -364,6 +380,7 @@ fun vibrarCarta(carta: ImageView) {
                 }
         }
 }
+
 fun animarAcierto(carta: ImageView) {
     carta.animate()
         //AUMENTAMOS EL TAMAÑO VERTICAL Y HORIZONTAL
@@ -379,23 +396,72 @@ fun animarAcierto(carta: ImageView) {
                 .setDuration(200)
         }
 }
+
 fun animarFinalJuego(imageViews: List<ImageView>) {
     imageViews.forEach { imageView ->
         imageView.animate()
-            .scaleX(1.5f) // Aumentar el tamaño en el eje X
-            .scaleY(1.5f) // Aumentar el tamaño en el eje Y
-            .setDuration(1000) // Duración de la animación
-            .withEndAction {
-                // Al terminar, puedes devolver las imágenes a su tamaño original si lo deseas
+            //AUMENTAMOS EL TAMAÑO VERTICAL Y HORIZONTAL
+            .scaleX(1.5f)
+            .scaleY(1.5f)
+            .setDuration(1000)
+            .withEndAction { // VUELVE A LAS CARACTERISTICAS ORIGINALES
                 imageView.animate()
-                    .scaleX(1f) // Vuelve al tamaño original en el eje X
-                    .scaleY(1f) // Vuelve al tamaño original en el eje Y
-                    .setDuration(500) // Tiempo para el regreso
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(500)
                     .start()
             }
-            .start() // Inicia la animación
+            .start()
     }
 }
+
+fun animarCombo(tvCombo: TextView, context: Context) {
+    // Vibración
+    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+    } else {
+        vibrator.vibrate(100) // Para versiones anteriores de Android
+    }
+
+    // ANIMACION DE TAMAÑO
+    tvCombo.animate()
+        //AUMENTAMOS EL TAMAÑO VERTICAL Y HORIZONTAL
+        .scaleX(1.2f)
+        .scaleY(1.2f)
+        .setDuration(100)
+        .withEndAction { // VUELVE A LAS CARACTERISTICAS ORIGINALES
+            tvCombo.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(100)
+                .start()
+        }
+        .start()
+
+    // ANIMACION DE BRILLO
+    tvCombo.animate()
+        .alpha(0.5f) // BAJAMOS LA OPACIDAD
+        .setDuration(500)
+        .withEndAction { // VUELVE A LAS CARACTERISTICAS ORIGINALES
+            tvCombo.animate()
+                .alpha(1f)
+                .setDuration(500)
+                .start()
+        }
+        .start() // Inicia la animación de brillo
+}
+
+fun actualizarBonus(tv_bonus: TextView, bonus: Int) {
+    tv_bonus.text = when (bonus) {
+        1 -> "1x Combo!"
+        2 -> "2x Combo!!"
+        3 -> "3x Combo!!!"
+        else -> ""
+    }
+    animarCombo(tv_bonus, tv_bonus.context)
+}
+
 
 
 
