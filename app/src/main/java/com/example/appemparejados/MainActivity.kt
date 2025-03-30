@@ -1,18 +1,20 @@
 package com.example.appemparejados
 
+import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
-
+import android.view.Gravity
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -50,7 +52,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var tv_j1:TextView
     lateinit var tv_j2:TextView
     lateinit var tv_anuncio:TextView
-    lateinit var tv_bonus:TextView
 
     lateinit var ib_sonido:ImageButton
 
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
     var escuchar = true
     var bonus = 0
     //</editor-fold>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -110,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
 
         ib_sonido = findViewById(R.id.ib_sonido)
-        ib_sonido.setColorFilter(Color.GREEN)
+        ib_sonido.setColorFilter(Color.BLACK)
 
         sonido("background",true)
         iv_11.tag = "0"
@@ -144,9 +146,8 @@ class MainActivity : AppCompatActivity() {
         tv_j1 = findViewById(R.id.tv_j1)
         tv_j2 = findViewById(R.id.tv_j2)
         tv_j2.setTextColor(Color.GRAY)
-        tv_j1.setTextColor(Color.WHITE)
+        tv_j1.setTextColor(Color.BLUE)
         tv_anuncio = findViewById(R.id.tv_anuncio)
-        tv_bonus = findViewById(R.id.tv_bonus)
     }
 
     private fun sonido(sonidoName: String, loop: Boolean = false) {
@@ -178,7 +179,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             mpFondo.start()
             ib_sonido.setImageResource(R.drawable.ic_volumen_on)
-            ib_sonido.setColorFilter(Color.GREEN)
+            ib_sonido.setColorFilter(Color.BLACK)
         }
         escuchar = !escuchar
     }
@@ -260,35 +261,35 @@ class MainActivity : AppCompatActivity() {
                 puntosj1 += puntosAcumulados
                 tv_j1.text = "J1: $puntosj1"
                 bonus = (bonus + 1).coerceAtMost(3)
-                actualizarBonus(tv_bonus,bonus)
+                animarCombo(this, findViewById(R.id.fl_contenedor_combo), "¡$bonus x COMBO!")
             } else if (turno == 2) {
                 puntosj2 += puntosAcumulados
                 tv_j2.text = "J2: $puntosj2"
                 bonus = (bonus + 1).coerceAtMost(3)
-                actualizarBonus(tv_bonus,bonus)
+                animarCombo(this, findViewById(R.id.fl_contenedor_combo), "¡$bonus x COMBO!")
             }
             imagen1.isEnabled = false
             imagen2.isEnabled = false
             imagen1.tag = ""
             imagen2.tag = ""
         } else {
-            tv_bonus.text = ""
+            vibracionMovil(this)
             bonus = 0
             sonido("no")
-            vibrarCarta(imagen1)
-            vibrarCarta(imagen2)
+            animarError(imagen1)
+            animarError(imagen2)
             imagen1.setImageResource(R.drawable.oculta)
             imagen2.setImageResource(R.drawable.oculta)
             if (turno==1) {
-                tv_anuncio.text = "Turno del jugador 2"
+                animarAnuncio(tv_anuncio,"Turno del jugador 2",Color.RED)
                 turno = 2
                 tv_j1.setTextColor(Color.GRAY)
-                tv_j2.setTextColor(Color.WHITE)
+                tv_j2.setTextColor(Color.RED)
             } else if (turno==2) {
-                tv_anuncio.text = "Turno del jugador 1"
+                animarAnuncio(tv_anuncio, "Turno del jugador 1",Color.BLUE)
                 turno = 1
                 tv_j2.setTextColor(Color.GRAY)
-                tv_j1.setTextColor(Color.WHITE)
+                tv_j1.setTextColor(Color.BLUE)
             }
         }
         iv_11.isEnabled = iv_11.tag.toString().isNotEmpty()
@@ -365,7 +366,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-fun vibrarCarta(carta: ImageView) {
+fun animarError(carta: ImageView) {
     carta.animate()
         .translationXBy(20f) // MOVEMOS LA CARTA A LA DERECHA
         .setDuration(50)
@@ -415,55 +416,84 @@ fun animarFinalJuego(imageViews: List<ImageView>) {
     }
 }
 
-fun animarCombo(tvCombo: TextView, context: Context) {
-    // Vibración
+fun animarCombo(context: Context, parent: FrameLayout, combo: String) {
+    // CREAR UN NUEVO TextView Y CONFIGURAR SUS ATRIBUTOS
+    val textView = TextView(context).apply {
+        text = combo // ESTABLECER EL TEXTO DEL TextView
+        textSize = 30f // ESTABLECER EL TAMAÑO DE FUENTE
+        setTypeface(null, Typeface.BOLD) // ESTABLECER EL ESTILO DE FUENTE COMO NEGRITA
+        setTextColor(Color.YELLOW) // ESTABLECER EL COLOR DEL TEXTO (AMARILLO)
+        setShadowLayer(10f, 0f, 0f, Color.RED) // AÑADIR UNA SOMBRA AL TEXTO (SOMBRAS ROJAS)
+        gravity = Gravity.CENTER // CENTRAR EL TEXTO
+    }
+
+    // CONFIGURAR LOS PARÁMETROS DE LAYOUT PARA QUE EL TextView SE UBIQUE EN EL CENTRO
+    val params = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.WRAP_CONTENT, // ANCHO AJUSTADO AL CONTENIDO
+        FrameLayout.LayoutParams.WRAP_CONTENT  // ALTO AJUSTADO AL CONTENIDO
+    ).apply {
+        gravity = Gravity.CENTER // UBICAR EL TextView EN EL CENTRO DEL FrameLayout
+    }
+
+    textView.layoutParams = params // ASIGNAR LOS PARÁMETROS DE LAYOUT AL TextView
+    parent.addView(textView) // AÑADIR EL TextView AL FrameLayout
+
+    // INICIAR LA ANIMACIÓN: HACER QUE EL TEXTO SE HAGA GRANDE, BRILLE Y LUEGO SE HAGA PEQUEÑO Y DESAPAREZCA
+    textView.animate()
+        .scaleX(1.6f) // AMPLIAR EL TextView EN EL EJE X (ANCHO) AL DOBLE DE SU TAMAÑO ORIGINAL
+        .scaleY(1.6f) // AMPLIAR EL TextView EN EL EJE Y (ALTO) AL DOBLE DE SU TAMAÑO ORIGINAL
+        .alpha(1f) // AÑADIR UNA OPACIDAD COMPLETA AL TEXTO
+        .setDuration(500) // DURACIÓN DE ESTA ANIMACIÓN (500 MILISEGUNDOS)
+        .withEndAction {
+            // SEGUNDA PARTE DE LA ANIMACIÓN: HACERLO PEQUEÑO Y DESAPARECER
+            textView.animate()
+                .scaleX(0.5f) // HACER EL TextView MÁS PEQUEÑO EN EL EJE X
+                .scaleY(0.5f) // HACER EL TextView MÁS PEQUEÑO EN EL EJE Y
+                .alpha(0f) // HACER QUE EL TextView DESAPAREZCA (OPACIDAD 0)
+                .setDuration(2000) // DURACIÓN DE ESTA SEGUNDA ANIMACIÓN (2000 MILISEGUNDOS)
+                .withEndAction {
+                    parent.removeView(textView) // ELIMINAR EL TextView DEL FrameLayout AL TERMINAR LA ANIMACIÓN
+                }
+                .start() // INICIAR LA SEGUNDA PARTE DE LA ANIMACIÓN
+        }
+        .start() // INICIAR LA PRIMERA PARTE DE LA ANIMACIÓN
+}
+
+fun vibracionMovil(context: Context) {
+    // OBTENEMOS EL SERVICIO DE VIBRACIÓN DEL SISTEMA
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
-    } else {
-        vibrator.vibrate(100) // Para versiones anteriores de Android
+
+    // COMPROBAMOS SI EL DISPOSITIVO TIENE SOPORTE PARA VIBRACIÓN
+    if (vibrator.hasVibrator()) {
+        // CREAMOS UN PATRÓN DE VIBRACIÓN (TIEMPO EN MILISEGUNDOS)
+        // EL PATRÓN ES: [TIEMPO DE VIBRACIÓN, TIEMPO DE ESPERA, TIEMPO DE VIBRACIÓN]
+        val pattern = longArrayOf(0, 200, 100, 200) // VIBRA 200MS, ESPERA 100MS, VIBRA 200MS
+
+        // VERIFICAMOS LA VERSIÓN DE ANDROID Y APLICAMOS EL MÉTODO CORRESPONDIENTE
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            // PARA VERSIONES DE ANDROID OREO (API 26) O SUPERIOR, USAMOS VIBRATIONEFFECT
+            vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1)) // EL -1 SIGNIFICA QUE NO SE REPITE
+        } else {
+            vibrator.vibrate(pattern, -1) // EL -1 SIGNIFICA QUE NO SE REPITE
+        }
     }
-
-    // ANIMACION DE TAMAÑO
-    tvCombo.animate()
-        //AUMENTAMOS EL TAMAÑO VERTICAL Y HORIZONTAL
-        .scaleX(1.2f)
-        .scaleY(1.2f)
-        .setDuration(100)
-        .withEndAction { // VUELVE A LAS CARACTERISTICAS ORIGINALES
-            tvCombo.animate()
-                .scaleX(1f)
-                .scaleY(1f)
-                .setDuration(100)
-                .start()
-        }
-        .start()
-
-    // ANIMACION DE BRILLO
-    tvCombo.animate()
-        .alpha(0.5f) // BAJAMOS LA OPACIDAD
-        .setDuration(500)
-        .withEndAction { // VUELVE A LAS CARACTERISTICAS ORIGINALES
-            tvCombo.animate()
-                .alpha(1f)
-                .setDuration(500)
-                .start()
-        }
-        .start() // Inicia la animación de brillo
 }
 
-fun actualizarBonus(tv_bonus: TextView, bonus: Int) {
-    tv_bonus.text = when (bonus) {
-        1 -> "1x Combo!"
-        2 -> "2x Combo!!"
-        3 -> "3x Combo!!!"
-        else -> ""
-    }
-    animarCombo(tv_bonus, tv_bonus.context)
+fun animarAnuncio(textView: TextView, anuncio: String, colorJugador:Int) {
+    textView.setTextColor(colorJugador)
+
+    // ESCALA DEL TEXTVIEW (EFECTO DE CRECER Y LUEGO VOLVER A SU TAMAÑO ORIGINAL)
+    val scaleX = android.animation.ObjectAnimator.ofFloat(textView, "scaleX", 1f, 1.5f, 1f) // Animación de escala horizontal
+    val scaleY = android.animation.ObjectAnimator.ofFloat(textView, "scaleY", 1f, 1.5f, 1f) // Animación de escala vertical
+
+    // DURACIÓN DE LA ANIMACIÓN (500 MILISEGUNDOS)
+    scaleX.duration = 500
+    scaleY.duration = 500
+
+    // INICIAMOS LA ANIMACIÓN
+    scaleX.start()
+    scaleY.start()
+
+    // CAMBIAMOS EL TEXTO A "ES EL TURNO DE [NOMBRE]" O LO QUE QUIERAS
+    textView.text = anuncio
 }
-
-
-
-
-
-
