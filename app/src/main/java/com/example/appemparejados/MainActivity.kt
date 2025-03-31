@@ -22,6 +22,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
 
+
 class MainActivity : AppCompatActivity() {
     //<editor-fold desc="IMAGENES GUI">
     lateinit var iv_11:ImageView
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mpFondo:MediaPlayer
     lateinit var imagen1:ImageView
     lateinit var imagen2:ImageView
+
     //</editor-fold>
     //<editor-fold desc="VARIABLES GUI">
     var imagenesArray = arrayOf(11,12,13,14,15,16,17,18,21,22,23,24,25,26,27,28)
@@ -146,12 +148,13 @@ class MainActivity : AppCompatActivity() {
         tv_j1 = findViewById(R.id.tv_j1)
         tv_j2 = findViewById(R.id.tv_j2)
         tv_j2.setTextColor(Color.GRAY)
-        tv_j1.setTextColor(Color.BLUE)
+        tv_j1.setTextColor(getResources().getColor(R.color.azulJugador1))
         tv_anuncio = findViewById(R.id.tv_anuncio)
+
     }
 
     private fun sonido(sonidoName: String, loop: Boolean = false) {
-        var resID = resources.getIdentifier(sonidoName, "raw", packageName)
+        val resID = resources.getIdentifier(sonidoName, "raw", packageName)
 
         if (sonidoName == "background") {
             mpFondo = MediaPlayer.create(this,resID)
@@ -281,15 +284,15 @@ class MainActivity : AppCompatActivity() {
             imagen1.setImageResource(R.drawable.oculta)
             imagen2.setImageResource(R.drawable.oculta)
             if (turno==1) {
-                animarAnuncio(tv_anuncio,"Turno del jugador 2",Color.RED)
+                animarAnuncio(tv_anuncio,"Turno del jugador 2",getResources().getColor(R.color.azulJugador1))
                 turno = 2
                 tv_j1.setTextColor(Color.GRAY)
-                tv_j2.setTextColor(Color.RED)
+                tv_j2.setTextColor(getResources().getColor(R.color.azulJugador1))
             } else if (turno==2) {
-                animarAnuncio(tv_anuncio, "Turno del jugador 1",Color.BLUE)
+                animarAnuncio(tv_anuncio, "Turno del jugador 1",getResources().getColor(R.color.rojoJugador2))
                 turno = 1
                 tv_j2.setTextColor(Color.GRAY)
-                tv_j1.setTextColor(Color.BLUE)
+                tv_j1.setTextColor(getResources().getColor(R.color.rojoJugador2))
             }
         }
         iv_11.isEnabled = iv_11.tag.toString().isNotEmpty()

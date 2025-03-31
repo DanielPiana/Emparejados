@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="azulJugador1">#111e2e</color>
+    <color name="rojoJugador2">#941120</color>
 </resources>
