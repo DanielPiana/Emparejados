@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/white"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="monospace"
+        android:text="@string/resultados_de_la_partida"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_resultadoj1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text=""
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toStartOf="@id/tv_resultadoj2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titulo"
+        android:layout_marginTop="20dp"
+        android:lineSpacingMultiplier="1.2"
+        />
+    <TextView
+        android:id="@+id/tv_resultadoj2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text=""
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_resultadoj1"
+        app:layout_constraintTop_toBottomOf="@+id/titulo"
+        android:layout_marginTop="20dp"
+        android:lineSpacingMultiplier="1.2"
+        />
+
+
+    <Button
+        android:id="@+id/b_salir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/salir"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/rojoJugador2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/b_jugarDeNuevo"
+        app:layout_constraintTop_toBottomOf="@id/tv_resultadoj1"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/b_jugarDeNuevo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/jugar_de_nuevo"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/azulJugador1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/b_salir"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_resultadoj2"
+        android:layout_marginTop="20dp"
+
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

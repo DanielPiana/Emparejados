@@ -284,12 +284,14 @@ class MainActivity : AppCompatActivity() {
             imagen1.setImageResource(R.drawable.oculta)
             imagen2.setImageResource(R.drawable.oculta)
             if (turno==1) {
-                animarAnuncio(tv_anuncio,"Turno del jugador 2",getResources().getColor(R.color.azulJugador1))
+                animarAnuncio(tv_anuncio,
+                    getString(R.string.turno_del_jugador_2),getResources().getColor(R.color.azulJugador1))
                 turno = 2
                 tv_j1.setTextColor(Color.GRAY)
                 tv_j2.setTextColor(getResources().getColor(R.color.azulJugador1))
             } else if (turno==2) {
-                animarAnuncio(tv_anuncio, "Turno del jugador 1",getResources().getColor(R.color.rojoJugador2))
+                animarAnuncio(tv_anuncio,
+                    getString(R.string.turno_del_jugador_1),getResources().getColor(R.color.rojoJugador2))
                 turno = 1
                 tv_j2.setTextColor(Color.GRAY)
                 tv_j1.setTextColor(getResources().getColor(R.color.rojoJugador2))
@@ -321,22 +323,28 @@ class MainActivity : AppCompatActivity() {
             mp.release()
             animarFinalJuego(imageViews)
             sonido("win")
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("FIN DEL JUEGO")
-                .setMessage("PUNTAJE \nJ1: $puntosj1\nJ2: $puntosj2")
-                .setCancelable(false)
-                .setPositiveButton("Nuevo juego",
-                    DialogInterface.OnClickListener{ dialogInterface, i ->
-                        val intent = Intent(this,MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    })
-                .setNegativeButton("Salir",
-                    DialogInterface.OnClickListener{ dialogInterface, i ->
-                        finish()
-                    })
-            val ad = builder.create()
-            ad.show()
+
+            // CREAMOS UNA INSTANCIA DEL DIALOG
+            val dialog = dialogFinJuego()
+
+
+            dialog.arguments = Bundle().apply {
+                putInt("puntosJugador1",puntosj1)
+                putInt("puntosJugador2",puntosj2)
+            }
+
+            dialog.setAcciones(
+                jugarDeNuevo = {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                },
+                salir = {
+                    finish()
+                }
+            )
+
+            dialog.show(supportFragmentManager, getString(R.string.dialogofinaljuego))
         }
     }
 

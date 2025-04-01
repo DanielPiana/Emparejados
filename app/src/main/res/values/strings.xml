@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AppEmparejados</string>
+    <string name="salir">Salir</string>
+    <string name="jugar_de_nuevo">Jugar de nuevo</string>
+    <string name="resultados_de_la_partida">Resultados de la partida</string>
+    <string name="dialogofinaljuego">DialogoFinalJuego</string>
+    <string name="turno_del_jugador_2">Turno del jugador 2</string>
+    <string name="turno_del_jugador_1">Turno del jugador 1</string>
 </resources>
